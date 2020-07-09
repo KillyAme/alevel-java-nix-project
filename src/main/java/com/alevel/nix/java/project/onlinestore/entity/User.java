@@ -1,11 +1,11 @@
 package com.alevel.nix.java.project.onlinestore.entity;
 
+import com.alevel.nix.java.project.onlinestore.entity.enums.Role;
 import org.hibernate.annotations.NaturalId;
-import org.springframework.data.annotation.Id;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.util.List;
+
 @Entity
 @Table(name = "users")
 public class User {
@@ -26,13 +26,24 @@ public class User {
     @NaturalId
     private String email;
 
-    private LocalDate birthday;
 
-
+    @OneToOne(mappedBy = "basketUser", cascade = CascadeType.ALL, orphanRemoval = true)
     private Basket userBasket;
 
-
+    @OneToMany(mappedBy = "user")
     private List<Order> orders;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
 
     public Long getId() {
         return id;
@@ -72,14 +83,6 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public LocalDate getBirthday() {
-        return birthday;
-    }
-
-    public void setBirthday(LocalDate birthday) {
-        this.birthday = birthday;
     }
 
     public Basket getUserBasket() {

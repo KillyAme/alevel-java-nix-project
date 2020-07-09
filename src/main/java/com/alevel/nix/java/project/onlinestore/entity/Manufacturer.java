@@ -1,11 +1,10 @@
 package com.alevel.nix.java.project.onlinestore.entity;
 
-import javax.persistence.*;
-import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 
 @Embeddable
 public class Manufacturer {
-
 
 
     @Column(name = "company_name", nullable = false)
@@ -13,15 +12,19 @@ public class Manufacturer {
 
     private String series;
 
+    @Column(name = "model_name")
     private String modelName;
 
     @Column(name = "product_name", nullable = false)
     private String productName;
 
+    public String getModelName() {
+        return modelName;
+    }
 
-
-
-
+    public void setModelName(String modelName) {
+        this.modelName = modelName;
+    }
 
     public String getCompanyName() {
         return companyName;
