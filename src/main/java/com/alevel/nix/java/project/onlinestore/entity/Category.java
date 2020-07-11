@@ -1,8 +1,10 @@
 package com.alevel.nix.java.project.onlinestore.entity;
 
+import io.micrometer.core.lang.NonNull;
 import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -16,9 +18,15 @@ public class Category {
     @NaturalId
     private String name;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Product> productsOfCategory;
+    @OneToMany(mappedBy = "category")
+    private List<Product> productsOfCategory = new ArrayList<>();
 
+    public Category() {
+    }
+
+    public Category(String name) {
+        this.name = name;
+    }
 
     public List<Product> getProductsOfCategory() {
         return productsOfCategory;

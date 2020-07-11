@@ -3,6 +3,7 @@ package com.alevel.nix.java.project.onlinestore.entity;
 import com.alevel.nix.java.project.onlinestore.entity.enums.OrderStatus;
 
 import javax.persistence.*;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,9 +33,13 @@ public class Order {
     private OrderStatus orderStatus;
 
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+
+    private Instant timestamp;
+
 
     public Order() {
     }
@@ -45,8 +50,16 @@ public class Order {
         orderPrice = user.getUserBasket().getAmount();
         this.deliveryAddress = deliveryAddress;
         this.user = user;
+        timestamp = Instant.now();
         orderStatus = OrderStatus.IN_THE_PROCESS;
         user.getUserBasket().resetBasket();
+    }
+    public Instant getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Instant timestamp) {
+        this.timestamp = timestamp;
     }
 
     public DeliveryAddress getDeliveryAddress() {

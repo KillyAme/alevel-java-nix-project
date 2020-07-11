@@ -8,7 +8,7 @@ import java.util.List;
 @Table(name = "baskets")
 public class Basket {
 
-
+// todo use mapsId
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -38,6 +38,23 @@ public class Basket {
     public Basket() {
     }
 
+    public void addProductInBasket(Product product) {
+        productListInBasket.add(product);
+        amount = amount + product.getPrice();
+    }
+
+    public void deleteProductOfBasket(Product product) {
+        Long price = product.getPrice().longValue();
+        productListInBasket.remove(product);
+        amount = amount - price;
+
+    }
+
+    public void resetBasket() {
+        amount = 0L;
+        productListInBasket.clear();
+    }
+
     public Long getId() {
         return id;
     }
@@ -58,12 +75,5 @@ public class Basket {
         this.amount = amount;
     }
 
-    public void addProductInBasket(Product product) {
-        productListInBasket.add(product);
-        amount = amount + product.getPrice();
-    }
 
-    public void resetBasket() {
-        productListInBasket.clear();
-    }
 }
