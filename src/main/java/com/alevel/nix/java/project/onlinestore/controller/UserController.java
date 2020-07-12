@@ -2,6 +2,7 @@ package com.alevel.nix.java.project.onlinestore.controller;
 
 import com.alevel.nix.java.project.onlinestore.entity.enums.OrderStatus;
 import com.alevel.nix.java.project.onlinestore.entity.request.OrderRequest;
+import com.alevel.nix.java.project.onlinestore.entity.request.ProductIdRequest;
 import com.alevel.nix.java.project.onlinestore.entity.request.UserRequest;
 import com.alevel.nix.java.project.onlinestore.entity.response.BasketResponse;
 import com.alevel.nix.java.project.onlinestore.entity.response.OrderResponse;
@@ -41,6 +42,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     public UserResponse getUser(@PathVariable Long id) {
+
         return userOperations.getUserById(id);
     }
 
@@ -63,14 +65,14 @@ public class UserController {
 
     @PutMapping("/{id}/basket/products")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void addProductInUserBasket(@PathVariable Long id, @RequestBody Long productId) {
-        basketOperations.addProductInBasketByUserIdAndProductId(id, productId);
+    public void addProductInUserBasket(@PathVariable Long id, @RequestBody ProductIdRequest productId) {
+        basketOperations.addProductInBasketByUserIdAndProductId(id, productId.getId());
     }
 
     @DeleteMapping("/{id}/basket/products")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteProductOfUserBasket(@PathVariable Long id, @RequestBody Long productId) {
-        basketOperations.deleteProductOfBasketByUserIdAndProductId(id, productId);
+    public void deleteProductOfUserBasket(@PathVariable Long id, @RequestBody ProductIdRequest productId) {
+        basketOperations.deleteProductOfBasketByUserIdAndProductId(id, productId.getId());
     }
 
     @GetMapping("/{userId}/orders/{orderId}")

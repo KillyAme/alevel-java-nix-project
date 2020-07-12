@@ -6,9 +6,11 @@ import com.alevel.nix.java.project.onlinestore.entity.enums.Role;
 import com.alevel.nix.java.project.onlinestore.entity.request.UserRequest;
 import com.alevel.nix.java.project.onlinestore.entity.response.UserResponse;
 import com.alevel.nix.java.project.onlinestore.exception.EmailAlreadyTakenException;
+import com.alevel.nix.java.project.onlinestore.exception.NotAuthorizedException;
 import com.alevel.nix.java.project.onlinestore.exception.UserNameAlreadyTakenException;
 import com.alevel.nix.java.project.onlinestore.exception.UserNotFoundException;
 import com.alevel.nix.java.project.onlinestore.repository.UserRepository;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,7 +45,9 @@ public class UserService implements UserOperations {
         user.setRole(Role.USER);
         user.setPhone(userRequest.getPhone());
         user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
-        user.setUserBasket(new Basket());
+        Basket basket = new Basket();
+        basket.setBasketUser(user);
+        user.setUserBasket(basket);
 
         return new UserResponse(userRepository.save(user));
     }
@@ -52,6 +56,12 @@ public class UserService implements UserOperations {
     public UserResponse getUserById(Long id) {
         UserResponse response = new UserResponse();
         User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+
+        String nameAuthorized = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (!nameAuthorized.equals(user.getName())) {
+            throw new NotAuthorizedException("You cannot view someone else’s profile");
+        }
+        response.setId(user.getId());
         response.setUserName(user.getName());
         response.setEmail(user.getEmail());
         response.setPhone(user.getPhone());
@@ -62,6 +72,10 @@ public class UserService implements UserOperations {
     @Override
     public void updateUser(Long id, UserRequest userRequest) {
         User changedUser = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+        String nameAuthorized = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (!nameAuthorized.equals(changedUser.getName())) {
+            throw new NotAuthorizedException("You can’t change someone else’s profile");
+        }
 
         String userName = userRequest.getName();
         String email = userRequest.getEmail();

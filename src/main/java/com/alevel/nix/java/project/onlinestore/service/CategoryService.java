@@ -2,6 +2,7 @@ package com.alevel.nix.java.project.onlinestore.service;
 
 import com.alevel.nix.java.project.onlinestore.entity.Category;
 import com.alevel.nix.java.project.onlinestore.entity.Product;
+import com.alevel.nix.java.project.onlinestore.entity.request.CategoryRequest;
 import com.alevel.nix.java.project.onlinestore.entity.response.CategoryResponse;
 import com.alevel.nix.java.project.onlinestore.entity.response.ProductResponse;
 import com.alevel.nix.java.project.onlinestore.exception.CategoryAlreadyTakenException;
@@ -26,21 +27,21 @@ public class CategoryService implements CategoryOperations {
     }
 
     @Override
-    public CategoryResponse createCategory(String categoryName) {
-        if (categoryRepository.existsByName(categoryName)) {
-            throw new CategoryAlreadyTakenException(categoryName);
+    public CategoryResponse createCategory(CategoryRequest request) {
+        if (categoryRepository.existsByName(request.getName())) {
+            throw new CategoryAlreadyTakenException(request.getName());
         }
-        Category category = new Category(categoryName);
+        Category category = new Category(request.getName());
         Category save = categoryRepository.save(category);
 
         return new CategoryResponse(save);
     }
 
     @Override
-    public List<ProductResponse> getProductsByCategory(String categoryName) {
+    public List<ProductResponse> getProductsByCategory(Long categoryId) {
         Category category = categoryRepository
-                .getByName(categoryName)
-                .orElseThrow(() -> new CategoryNotFoundException(categoryName));
+                .getById(categoryId)
+                .orElseThrow(() -> new CategoryNotFoundException(categoryId));
         List<Product> productsOfCategory = category.getProductsOfCategory();
         List<ProductResponse> productsResponse = new ArrayList<>();
         for (Product productOfCategory : productsOfCategory) {
@@ -59,13 +60,21 @@ public class CategoryService implements CategoryOperations {
     }
 
     @Override
-    public void deleteCategory(String categoryName) {
-        if (!categoryRepository.existsByName(categoryName)) {
-            throw new CategoryNotFoundException(categoryName);
+    public void deleteCategory(Long id) {
+        if (!categoryRepository.existsById(id)) {
+            throw new CategoryNotFoundException(id);
         }
         Category category = categoryRepository
-                .getByName(categoryName)
-                .orElseThrow(() -> new CategoryNotFoundException(categoryName));
+                .getById(id)
+                .orElseThrow(() -> new CategoryNotFoundException(id));
         categoryRepository.delete(category);
+    }
+
+    @Override
+    public CategoryResponse getCategoryById(Long id) {
+        Category category = categoryRepository.getById(id)
+                .orElseThrow(() -> new CategoryNotFoundException(id));
+
+        return new CategoryResponse(category);
     }
 }

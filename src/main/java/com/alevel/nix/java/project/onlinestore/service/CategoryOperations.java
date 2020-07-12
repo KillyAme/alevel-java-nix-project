@@ -8,13 +8,15 @@ import java.util.List;
 
 public interface CategoryOperations {
 
-    CategoryResponse createCategory(String categoryName);
+    CategoryResponse createCategory(CategoryRequest categoryName);
 
-    List<ProductResponse> getProductsByCategory(String categoryName);
+    List<ProductResponse> getProductsByCategory(Long id);
 
     List<CategoryResponse> getCategories();
 
-    void deleteCategory(String categoryName);
+    CategoryResponse getCategoryById(Long id);
+
+    void deleteCategory(Long id);
 
 
 }

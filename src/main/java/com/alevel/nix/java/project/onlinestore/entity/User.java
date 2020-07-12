@@ -15,7 +15,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @NaturalId
     private String name;
 
     @Column(nullable = false)
@@ -24,7 +24,7 @@ public class User {
     @Column(name = "phone_number")
     private String phone;
 
-    @NaturalId
+    @Column(nullable = false, unique = true)
     private String email;
 
 

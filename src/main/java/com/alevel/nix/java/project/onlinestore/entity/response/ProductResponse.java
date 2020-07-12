@@ -22,7 +22,7 @@ public class ProductResponse {
         this.company = product.getModel().getCompanyName();
         this.series = product.getModel().getSeries();
         this.model = product.getModel().getModelName();
-        this.productName = product.getModel().getModelName();
+        this.productName = product.getModel().getProductName();
     }
 
     public Long getId() {

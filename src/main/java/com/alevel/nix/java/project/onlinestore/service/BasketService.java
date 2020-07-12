@@ -2,12 +2,15 @@ package com.alevel.nix.java.project.onlinestore.service;
 
 import com.alevel.nix.java.project.onlinestore.entity.Basket;
 import com.alevel.nix.java.project.onlinestore.entity.Product;
+import com.alevel.nix.java.project.onlinestore.entity.User;
 import com.alevel.nix.java.project.onlinestore.entity.response.BasketResponse;
 import com.alevel.nix.java.project.onlinestore.exception.BasketNotFoundException;
+import com.alevel.nix.java.project.onlinestore.exception.NotAuthorizedException;
 import com.alevel.nix.java.project.onlinestore.exception.ProductNotFoundException;
 import com.alevel.nix.java.project.onlinestore.repository.BasketRepository;
 import com.alevel.nix.java.project.onlinestore.repository.ProductRepository;
 import com.alevel.nix.java.project.onlinestore.repository.UserRepository;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,20 +32,28 @@ public class BasketService implements BasketOperations {
 
     @Override
     public BasketResponse getBasketByUserId(Long userId) {
-        Basket userBasket = userRepository
-                .findById(userId)
-                .orElseThrow(() -> new BasketNotFoundException(userId))
-                .getUserBasket();
+        User user = getUser(userId);
+
+        String nameAuthorized = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (!nameAuthorized.equals(user.getName())) {
+            throw new NotAuthorizedException("You cannot view someone else’s basket");
+        }
+
+        Basket userBasket = user.getUserBasket();
         return new BasketResponse(userBasket);
 
     }
 
     @Override
     public void clearBasketByUser(Long userId) {
-        Basket basket = userRepository
-                .findById(userId)
-                .orElseThrow(() -> new BasketNotFoundException(userId))
-                .getUserBasket();
+        User user = getUser(userId);
+
+        String nameAuthorized = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (!nameAuthorized.equals(user.getName())) {
+            throw new NotAuthorizedException("You cannot clear someone else’s basket");
+        }
+
+        Basket basket = user.getUserBasket();
         basket.resetBasket();
         basketRepository.save(basket);
 
@@ -50,13 +61,18 @@ public class BasketService implements BasketOperations {
 
     @Override
     public void addProductInBasketByUserIdAndProductId(Long userId, Long productId) {
+        User user = getUser(userId);
+
+        String nameAuthorized = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (!nameAuthorized.equals(user.getName())) {
+            throw new NotAuthorizedException("You cannot add product in someone else’s basket");
+        }
+
         Product product = productRepository
                 .findById(productId)
                 .orElseThrow(() -> new ProductNotFoundException(productId));
-        Basket basket = userRepository
-                .findById(userId)
-                .orElseThrow(() -> new BasketNotFoundException(userId))
-                .getUserBasket();
+
+        Basket basket = user.getUserBasket();
         basket.addProductInBasket(product);
 
         basketRepository.save(basket);
@@ -65,15 +81,26 @@ public class BasketService implements BasketOperations {
 
     @Override
     public void deleteProductOfBasketByUserIdAndProductId(Long userId, Long productId) {
-        Basket basket = userRepository
-                .findById(userId)
-                .orElseThrow(() -> new BasketNotFoundException(userId))
-                .getUserBasket();
+        User user = getUser(userId);
+
+        String nameAuthorized = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (!nameAuthorized.equals(user.getName())) {
+            throw new NotAuthorizedException("You cannot delete product of someone else’s basket");
+        }
+
         Product product = productRepository
                 .findById(productId)
                 .orElseThrow(() -> new ProductNotFoundException(productId));
+
+        Basket basket = user.getUserBasket();
         basket.deleteProductOfBasket(product);
-        product.getBaskets().remove(basket);
+        //product.getBaskets().remove(basket);
         basketRepository.save(basket);
+    }
+
+    private User getUser(Long userId) {
+        return userRepository
+                .findById(userId)
+                .orElseThrow(() -> new BasketNotFoundException(userId));
     }
 }
