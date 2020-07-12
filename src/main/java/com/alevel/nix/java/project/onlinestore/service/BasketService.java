@@ -6,6 +6,7 @@ import com.alevel.nix.java.project.onlinestore.entity.User;
 import com.alevel.nix.java.project.onlinestore.entity.response.BasketResponse;
 import com.alevel.nix.java.project.onlinestore.exception.BasketNotFoundException;
 import com.alevel.nix.java.project.onlinestore.exception.NotAuthorizedException;
+import com.alevel.nix.java.project.onlinestore.exception.ProductAvailabilityException;
 import com.alevel.nix.java.project.onlinestore.exception.ProductNotFoundException;
 import com.alevel.nix.java.project.onlinestore.repository.BasketRepository;
 import com.alevel.nix.java.project.onlinestore.repository.ProductRepository;
@@ -71,6 +72,9 @@ public class BasketService implements BasketOperations {
         Product product = productRepository
                 .findById(productId)
                 .orElseThrow(() -> new ProductNotFoundException(productId));
+        if (!product.getAvailability()){
+            throw new ProductAvailabilityException(productId);
+        }
 
         Basket basket = user.getUserBasket();
         basket.addProductInBasket(product);

@@ -36,12 +36,16 @@ public class ProductController {
     }
 
     @GetMapping
-    public List<ProductResponse> getAllProducts() {
-        return productOperations.getAllProducts();
+    public List<ProductResponse> getAllProducts(@RequestParam(required = false) Boolean availability) {
+
+        return availability != null
+                ? productOperations.getAllProductsByAvailability(availability)
+                : productOperations.getAllProducts();
+
     }
 
     @GetMapping("/{id}")
-    public ProductResponse getProduct(@PathVariable Long id){
+    public ProductResponse getProduct(@PathVariable Long id) {
         return productOperations.getProductById(id);
     }
 

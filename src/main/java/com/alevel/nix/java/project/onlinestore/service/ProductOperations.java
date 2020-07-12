@@ -1,6 +1,5 @@
 package com.alevel.nix.java.project.onlinestore.service;
 
-import com.alevel.nix.java.project.onlinestore.entity.Product;
 import com.alevel.nix.java.project.onlinestore.entity.request.SaveProductRequest;
 import com.alevel.nix.java.project.onlinestore.entity.request.UpdateProductRequest;
 import com.alevel.nix.java.project.onlinestore.entity.response.ProductResponse;
@@ -14,6 +13,8 @@ public interface ProductOperations {
     void updateProduct(Long productId, UpdateProductRequest updateProductRequest);
 
     List<ProductResponse> getAllProducts();
+
+    List<ProductResponse> getAllProductsByAvailability(Boolean availability);
 
     ProductResponse getProductById(Long id);
 }

@@ -3,6 +3,7 @@ package com.alevel.nix.java.project.onlinestore.service;
 import com.alevel.nix.java.project.onlinestore.entity.Basket;
 import com.alevel.nix.java.project.onlinestore.entity.User;
 import com.alevel.nix.java.project.onlinestore.entity.enums.Role;
+import com.alevel.nix.java.project.onlinestore.entity.request.UserIdRequest;
 import com.alevel.nix.java.project.onlinestore.entity.request.UserRequest;
 import com.alevel.nix.java.project.onlinestore.entity.response.UserResponse;
 import com.alevel.nix.java.project.onlinestore.exception.EmailAlreadyTakenException;
@@ -14,6 +15,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Transactional
@@ -101,6 +105,23 @@ public class UserService implements UserOperations {
             changedUser.setPassword(passwordEncoder.encode(password));
         }
         userRepository.save(changedUser);
+    }
+
+    @Override
+    public void giveAdminRights(UserIdRequest request) {
+        User user = userRepository.findById(request.getId()).orElseThrow(() -> new UserNotFoundException(request.getId()));
+        user.setRole(Role.ADMIN);
+        userRepository.save(user);
+    }
+
+    @Override
+    public List<UserResponse> getAdmins() {
+        List<User> allAdmins = userRepository.findAllByRole(Role.ADMIN);
+        List<UserResponse> responseAdmins = new ArrayList<>();
+        for (User admin : allAdmins) {
+            responseAdmins.add(new UserResponse(admin));
+        }
+        return responseAdmins;
     }
 
 }

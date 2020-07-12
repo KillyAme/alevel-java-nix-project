@@ -1,6 +1,7 @@
 package com.alevel.nix.java.project.onlinestore.entity;
 
 import com.alevel.nix.java.project.onlinestore.entity.enums.OrderStatus;
+import com.alevel.nix.java.project.onlinestore.exception.OrderCreationException;
 
 import javax.persistence.*;
 import java.time.Instant;
@@ -46,6 +47,9 @@ public class Order {
 
 
     public Order(DeliveryAddress deliveryAddress, User user) {
+        if (user.getUserBasket().getProductListInBasket().isEmpty()) {
+            throw new OrderCreationException();
+        }
         productList = new ArrayList<>(user.getUserBasket().getProductListInBasket());
         orderPrice = user.getUserBasket().getAmount();
         this.deliveryAddress = deliveryAddress;
@@ -54,6 +58,7 @@ public class Order {
         orderStatus = OrderStatus.IN_THE_PROCESS;
         user.getUserBasket().resetBasket();
     }
+
     public Instant getTimestamp() {
         return timestamp;
     }

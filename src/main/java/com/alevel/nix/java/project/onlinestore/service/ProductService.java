@@ -81,12 +81,26 @@ public class ProductService implements ProductOperations {
     }
 
 
+
+
     @Override
     public List<ProductResponse> getAllProducts() {
         List<Product> products = productRepository.findAll();
         List<ProductResponse> productResponseList = new ArrayList<>();
         for (Product product : products) {
             productResponseList.add(new ProductResponse(product));
+        }
+        return productResponseList;
+    }
+
+    @Override
+    public List<ProductResponse> getAllProductsByAvailability(Boolean availability) {
+        List<Product> products = productRepository.findAll();
+        List<ProductResponse> productResponseList = new ArrayList<>();
+        for (Product product : products) {
+            if (product.getAvailability().equals(availability)) {
+                productResponseList.add(new ProductResponse(product));
+            }
         }
         return productResponseList;
     }

@@ -8,7 +8,7 @@ import java.util.List;
 @Table(name = "baskets")
 public class Basket {
 
-    // todo use mapsId
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -44,7 +44,7 @@ public class Basket {
     }
 
     public void deleteProductOfBasket(Product product) {
-        if(productListInBasket.contains(product)) {
+        if (productListInBasket.contains(product)) {
             Long price = product.getPrice().longValue();
             productListInBasket.remove(product);
             amount = amount - price;

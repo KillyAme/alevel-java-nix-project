@@ -4,10 +4,8 @@ public class CategoryRequest {
 
     private String name;
 
-
     public CategoryRequest() {
     }
-
 
     public void setName(String name) {
         this.name = name;

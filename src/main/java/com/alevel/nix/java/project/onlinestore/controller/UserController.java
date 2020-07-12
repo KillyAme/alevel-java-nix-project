@@ -2,6 +2,7 @@ package com.alevel.nix.java.project.onlinestore.controller;
 
 import com.alevel.nix.java.project.onlinestore.entity.enums.OrderStatus;
 import com.alevel.nix.java.project.onlinestore.entity.request.OrderRequest;
+import com.alevel.nix.java.project.onlinestore.entity.request.OrderStatusRequest;
 import com.alevel.nix.java.project.onlinestore.entity.request.ProductIdRequest;
 import com.alevel.nix.java.project.onlinestore.entity.request.UserRequest;
 import com.alevel.nix.java.project.onlinestore.entity.response.BasketResponse;
@@ -82,13 +83,17 @@ public class UserController {
     }
 
     @GetMapping("/{userId}/orders")
-    public List<OrderResponse> getOrders(@PathVariable Long userId) {
-        return orderOperations.getOrdersByUserId(userId);
+    public List<OrderResponse> getOrders(@PathVariable Long userId,
+                                         @RequestParam(required = false) OrderStatus status) {
+        return status != null
+                ? orderOperations.getOrdersByUserIdAndStatus(userId, status)
+                : orderOperations.getOrdersByUserId(userId);
     }
 
     @PostMapping("/{userId}/orders")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<OrderResponse> createUserOrder(@PathVariable Long userId, @RequestBody OrderRequest request) {
+    public ResponseEntity<OrderResponse> createUserOrder(@PathVariable Long userId,
+                                                         @RequestBody OrderRequest request) {
         OrderResponse orderResponse = orderOperations.createOrderForUser(userId, request);
         return ResponseEntity
                 .created(URI.create("/users/" + userId + "/orders/" + orderResponse.getId()))
@@ -97,8 +102,9 @@ public class UserController {
 
     @PutMapping("/{userId}/orders/{orderId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void changeOrderStatus(@PathVariable Long userId, @PathVariable Long orderId, @RequestBody OrderStatus status) {
-        orderOperations.changeOrderStatus(userId, orderId, status);
+    public void changeOrderStatus(@PathVariable Long userId, @PathVariable Long orderId,
+                                  @RequestBody OrderStatusRequest status) {
+        orderOperations.changeOrderStatus(userId, orderId, status.getStatus());
     }
 
 }

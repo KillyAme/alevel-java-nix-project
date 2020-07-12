@@ -2,8 +2,6 @@ package com.alevel.nix.java.project.onlinestore.configuration;
 
 import com.alevel.nix.java.project.onlinestore.service.JPAUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
-import org.springframework.boot.actuate.health.HealthEndpoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -35,13 +33,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers(HttpMethod.GET,"/categories/**").permitAll()
-                .antMatchers(HttpMethod.GET,"/products/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/categories/**", "/products/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/users").permitAll()
-                .antMatchers(HttpMethod.POST,"/products").hasRole("ADMIN")
-                .antMatchers(HttpMethod.PUT,"/products/**").hasRole("ADMIN")
-                .antMatchers(HttpMethod.POST,"/categories").hasRole("ADMIN")
-                .requestMatchers(EndpointRequest.to(HealthEndpoint.class)).hasAnyRole("USER","ADMIN")
+                .antMatchers("/admins").hasRole("ADMIN")
+                .antMatchers(HttpMethod.POST, "/products", "/categories").hasRole("ADMIN")
+                .antMatchers(HttpMethod.PUT, "/products/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .httpBasic()

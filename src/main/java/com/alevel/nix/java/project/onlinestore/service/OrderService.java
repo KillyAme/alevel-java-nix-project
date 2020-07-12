@@ -32,12 +32,6 @@ public class OrderService implements OrderOperations {
         this.userRepository = userRepository;
     }
 
-    @Override
-    public OrderResponse getOrderById(Long orderId) {
-
-        Order order = orderRepository.findById(orderId).orElseThrow(() -> new OrderNotFoundException(orderId));
-        return new OrderResponse(order);
-    }
 
     @Override
     public OrderResponse getOrderByUserIdAndOrderId(Long userId, Long orderId) {
@@ -63,6 +57,21 @@ public class OrderService implements OrderOperations {
         for (Order order : orderRepository.findAllByUserId(userId)) {
             responses.add(new OrderResponse(order));
         }
+        return responses;
+    }
+
+    @Override
+    public List<OrderResponse> getOrdersByUserIdAndStatus(Long userId, OrderStatus status) {
+        User user = getUser(userId);
+        String nameAuthorized = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (!nameAuthorized.equals(user.getName())) {
+            throw new NotAuthorizedException("You cannot view someone else’s orders");
+        }
+        List<OrderResponse> responses = new ArrayList<>();
+        for (Order order : orderRepository.findAllByUserIdAndOrderStatus(userId, status)) {
+            responses.add(new OrderResponse(order));
+        }
+
         return responses;
     }
 

@@ -31,9 +31,11 @@ public class CategoryController {
     }
 
     @GetMapping("/{categoryId}/products")
-    public List<ProductResponse> getProducts(@PathVariable Long categoryId) {
-
-        return categoryOperations.getProductsByCategory(categoryId);
+    public List<ProductResponse> getProducts(@PathVariable Long categoryId,
+                                             @RequestParam(required = false) Boolean availability) {
+        return availability != null
+                ? categoryOperations.getProductsByCategoryAndAvailability(categoryId, availability)
+                : categoryOperations.getProductsByCategory(categoryId);
     }
 
     @GetMapping
@@ -42,7 +44,7 @@ public class CategoryController {
     }
 
     @GetMapping("/{id}")
-    public CategoryResponse getCategory(@PathVariable Long id){
+    public CategoryResponse getCategory(@PathVariable Long id) {
         return categoryOperations.getCategoryById(id);
     }
 }

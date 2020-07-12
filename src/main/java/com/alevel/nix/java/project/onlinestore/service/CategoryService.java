@@ -51,6 +51,21 @@ public class CategoryService implements CategoryOperations {
     }
 
     @Override
+    public List<ProductResponse> getProductsByCategoryAndAvailability(Long categoryId, Boolean availability) {
+        Category category = categoryRepository
+                .getById(categoryId)
+                .orElseThrow(() -> new CategoryNotFoundException(categoryId));
+        List<Product> productsOfCategory = category.getProductsOfCategory();
+        List<ProductResponse> productsResponse = new ArrayList<>();
+        for (Product productOfCategory : productsOfCategory) {
+            if (productOfCategory.getAvailability().equals(availability)) {
+                productsResponse.add(new ProductResponse(productOfCategory));
+            }
+        }
+        return productsResponse;
+    }
+
+    @Override
     public List<CategoryResponse> getCategories() {
         List<CategoryResponse> categories = new ArrayList<>();
         for (Category category : categoryRepository.findAll()) {

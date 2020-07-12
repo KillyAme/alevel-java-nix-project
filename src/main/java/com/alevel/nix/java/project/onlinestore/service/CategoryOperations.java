@@ -12,6 +12,8 @@ public interface CategoryOperations {
 
     List<ProductResponse> getProductsByCategory(Long id);
 
+    List<ProductResponse> getProductsByCategoryAndAvailability(Long id, Boolean availability);
+
     List<CategoryResponse> getCategories();
 
     CategoryResponse getCategoryById(Long id);
