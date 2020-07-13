@@ -10,6 +10,19 @@ public class SaveProductRequest {
     private String description;
     private String categoryName;
 
+    public SaveProductRequest(String company, String series, String model, String productName, Integer price, String description, String categoryName) {
+        this.company = company;
+        this.series = series;
+        this.model = model;
+        this.productName = productName;
+        this.price = price;
+        this.description = description;
+        this.categoryName = categoryName;
+    }
+
+    public SaveProductRequest() {
+    }
+
     public String getCompany() {
         return company;
     }

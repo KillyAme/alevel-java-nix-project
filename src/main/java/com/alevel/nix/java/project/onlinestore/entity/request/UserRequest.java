@@ -10,6 +10,15 @@ public class UserRequest {
 
     private String phone;
 
+    public UserRequest(String name, String email, String password, String phone) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.phone = phone;
+    }
+
+    public UserRequest() {
+    }
 
     public String getPhone() {
         return phone;

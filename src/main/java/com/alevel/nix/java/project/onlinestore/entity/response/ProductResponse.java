@@ -25,6 +25,9 @@ public class ProductResponse {
         this.productName = product.getModel().getProductName();
     }
 
+    public ProductResponse() {
+    }
+
     public Long getId() {
         return id;
     }
